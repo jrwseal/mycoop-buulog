@@ -7,19 +7,11 @@ import type { StudentWithStats } from '@/lib/types'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  const { data: students } = await supabase
-    .from('students')
-    .select('*')
-    .order('name')
-
-  const { data: consultStats } = await supabase
-    .from('consultations')
-    .select('student_id, date')
-    .order('date', { ascending: false })
-
-  const { data: milestoneStats } = await supabase
-    .from('milestones')
-    .select('student_id, completed_at')
+  const [{ data: students }, { data: consultStats }, { data: milestoneStats }] = await Promise.all([
+    supabase.from('students').select('*').order('name'),
+    supabase.from('consultations').select('student_id, date').order('date', { ascending: false }),
+    supabase.from('milestones').select('student_id, completed_at'),
+  ])
 
   const lastConsultMap = new Map<string, string>()
   consultStats?.forEach((c) => {

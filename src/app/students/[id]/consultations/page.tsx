@@ -9,17 +9,10 @@ export default async function ConsultationsPage({
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: student } = await supabase
-    .from('students')
-    .select('start_date, end_date')
-    .eq('id', id)
-    .single()
-
-  const { data: consultations } = await supabase
-    .from('consultations')
-    .select('*')
-    .eq('student_id', id)
-    .order('date', { ascending: false })
+  const [{ data: student }, { data: consultations }] = await Promise.all([
+    supabase.from('students').select('start_date, end_date').eq('id', id).single(),
+    supabase.from('consultations').select('*').eq('student_id', id).order('date', { ascending: false }),
+  ])
 
   return (
     <ConsultationsTab
