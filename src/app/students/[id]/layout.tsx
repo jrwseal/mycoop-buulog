@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { StudentTabNav } from '@/components/StudentTabNav'
+import { StudentHeader } from '@/components/StudentHeader'
 
 export default async function StudentLayout({
   children,
@@ -39,43 +40,7 @@ export default async function StudentLayout({
       </header>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-4">
-        <div className="mb-6">
-          <div className="flex items-start gap-3 mb-3">
-            <div>
-              <p className="text-xs font-mono text-[oklch(52%_0.01_260)] mb-0.5">
-                {student.student_id}
-              </p>
-              <h1 className="text-2xl font-semibold text-[oklch(16%_0.02_260)] leading-tight">
-                {student.name}
-              </h1>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-sm text-fg-label">
-            {student.company && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-line">
-                <span className="text-[oklch(52%_0.01_260)]">🏢</span>
-                {student.company}
-              </span>
-            )}
-            {student.major && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[oklch(94%_0.015_260)] border border-[oklch(85%_0.02_260)] text-[oklch(35%_0.1_260)]">
-                {student.major}
-              </span>
-            )}
-            {student.phone && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-line">
-                📞 {student.phone}
-              </span>
-            )}
-            {student.line_id && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-line">
-                💬 {student.line_id}
-              </span>
-            )}
-          </div>
-        </div>
-
+        <StudentHeader student={student} />
         <StudentTabNav studentId={id} />
       </div>
 
