@@ -4,20 +4,20 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --color-accent: oklch(40% 0.12 260);
-  --color-accent-hover: oklch(35% 0.12 260);
-  --color-surface: oklch(97% 0.006 85);
+  --color-accent: oklch(27% 0.13 253);
+  --color-accent-hover: oklch(21% 0.13 253);
+  --color-surface: oklch(97% 0.003 253);
   --color-card: oklch(100% 0 0);
-  --color-line: oklch(88% 0.008 260);
-  --color-input: oklch(82% 0.01 260);
-  --color-fg: oklch(20% 0.02 260);
-  --color-fg-2: oklch(50% 0.01 260);
-  --color-fg-3: oklch(55% 0.01 260);
-  --color-fg-label: oklch(40% 0.02 260);
+  --color-line: oklch(89% 0.008 253);
+  --color-input: oklch(83% 0.01 253);
+  --color-fg: oklch(15% 0.1 253);
+  --color-fg-2: oklch(42% 0.08 253);
+  --color-fg-3: oklch(55% 0.05 253);
+  --color-fg-label: oklch(35% 0.09 253);
 }
 
 body {
-  background: oklch(97% 0.006 85);
-  color: oklch(20% 0.02 260);
+  background: oklch(97% 0.003 253);
+  color: oklch(15% 0.1 253);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }

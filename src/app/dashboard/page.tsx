@@ -57,15 +57,15 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <header className="sticky top-0 z-10 bg-surface border-b border-line">
+      <header className="sticky top-0 z-10 bg-accent">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          <span className="text-base font-bold text-fg tracking-tight">
+          <span className="text-base font-bold text-white tracking-tight">
             MyCoop
           </span>
           <form action={signOut}>
             <button
               type="submit"
-              className="text-sm text-fg-2 hover:text-[oklch(30%_0.02_260)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded transition-colors"
+              className="text-sm text-white/70 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-accent rounded transition-colors"
             >
               ออกจากระบบ
             </button>

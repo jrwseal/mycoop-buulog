@@ -24,16 +24,16 @@ export default async function StudentLayout({
 
   return (
     <div className="min-h-screen bg-surface">
-      <header className="sticky top-0 z-10 bg-surface border-b border-line">
+      <header className="sticky top-0 z-10 bg-accent">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
           <Link
             href="/dashboard"
-            className="text-sm text-[oklch(48%_0.06_260)] hover:text-[oklch(38%_0.1_260)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded transition-colors"
+            className="text-sm text-white/70 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded transition-colors"
           >
             ← Dashboard
           </Link>
-          <span className="text-[oklch(75%_0.01_260)]">/</span>
-          <span className="text-sm font-medium text-[oklch(25%_0.02_260)] truncate">
+          <span className="text-white/40">/</span>
+          <span className="text-sm font-medium text-white truncate">
             {student.name}
           </span>
         </div>
