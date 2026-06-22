@@ -35,7 +35,7 @@ Shown between the stats strip and the student card grid, but **only when at leas
 - Sorted: longest gap first
 - Threshold: 30 days (hardcoded constant, easy to change later)
 
-Computed client-side from `enriched` array already built in `dashboard/page.tsx`. No extra DB calls.
+Computed server-side in `dashboard/page.tsx` from `enriched` array. No extra DB calls.
 
 ---
 
@@ -45,7 +45,7 @@ Computed client-side from `enriched` array already built in `dashboard/page.tsx`
 
 **Entry point:** "+ เพิ่มนิสิต" button in the dashboard header (beside "นิสิตสหกิจศึกษา" heading).
 
-**Behavior:** Clicking sets `adding` state → inline form appears between header and stats strip, same visual style as `ConsultationsTab` add form (white card, border-line, p-5, space-y-4).
+**Behavior:** Clicking sets `adding` state → inline form appears between header and stats strip, same visual style as `ConsultationsTab` add form (white card, border-line, p-5, space-y-4). State lives in a new `AddStudentForm` client component embedded in `page.tsx` (which stays a server component).
 
 **Fields (2-column grid where logical):**
 
@@ -93,7 +93,8 @@ All labels have matching `id`/`htmlFor` pairs (prefix: `student-new-`).
 
 | File | Change |
 |---|---|
-| `src/app/dashboard/page.tsx` | Add stats computation, needs-attention filter, `adding` state, inline add form |
+| `src/app/dashboard/page.tsx` | Add stats computation, needs-attention filter, render `AddStudentForm` |
+| `src/components/AddStudentForm.tsx` | New client component — `adding` state + inline add form |
 | `src/app/dashboard/actions.ts` | New file — `createStudent` server action |
 | `src/app/students/[id]/layout.tsx` | Add `editing` + `pendingDelete` state, edit form, delete confirm |
 | `src/app/students/[id]/actions.ts` | New file — `updateStudent`, `deleteStudent` server actions |
