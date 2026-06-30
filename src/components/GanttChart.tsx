@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import type { Student } from '@/lib/types'
 import {
   computeTimelineRange,
@@ -8,7 +8,6 @@ import {
   getMonthLabels,
   pxToDays,
   addDays,
-  type TimelineRange,
 } from '@/lib/gantt-utils'
 import { updateStudentDates } from '@/app/gantt/actions'
 import { GanttSidePanel } from './GanttSidePanel'
@@ -53,6 +52,7 @@ export function GanttChart({ students, milestones, consultations }: Props) {
   const chartAreaRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<DragState | null>(null)
   const isDraggingRef = useRef(false)
+  const localStudentsRef = useRef<Student[]>(students)
 
   const range = computeTimelineRange(localStudents)
   const monthLabels = getMonthLabels(range)
@@ -126,15 +126,19 @@ export function GanttChart({ students, milestones, consultations }: Props) {
     if (!isDraggingRef.current) return
     isDraggingRef.current = false
 
-    const student = localStudents.find(s => s.id === studentId)
+    const student = localStudentsRef.current.find(s => s.id === studentId)
     if (!student?.start_date || !student?.end_date) return
     await updateStudentDates(studentId, student.start_date, student.end_date)
-  }, [localStudents])
+  }, [])
 
   const handleRowClick = useCallback((student: Student) => {
     if (isDraggingRef.current) return
     setSelectedStudent(student)
   }, [])
+
+  useEffect(() => {
+    localStudentsRef.current = localStudents
+  }, [localStudents])
 
   return (
     <div>
