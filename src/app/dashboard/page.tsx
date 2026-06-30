@@ -59,9 +59,14 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-surface">
       <header className="sticky top-0 z-10 bg-accent">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          <span className="text-base font-bold text-white tracking-tight">
-            MyCoop
-          </span>
+          <div className="flex items-center gap-5">
+            <span className="text-base font-bold text-white tracking-tight">
+              MyCoop
+            </span>
+            <Link href="/gantt" className="text-sm text-white/70 hover:text-white transition-colors">
+              Gantt
+            </Link>
+          </div>
           <form action={signOut}>
             <button
               type="submit"
