@@ -11,6 +11,7 @@ import {
   type TimelineRange,
 } from '@/lib/gantt-utils'
 import { updateStudentDates } from '@/app/gantt/actions'
+import { GanttSidePanel } from './GanttSidePanel'
 
 type View = 'internship' | 'research'
 type DragZone = 'start' | 'end' | 'move'
@@ -46,6 +47,8 @@ interface DragState {
 export function GanttChart({ students, milestones, consultations }: Props) {
   const [view, setView] = useState<View>('internship')
   const [localStudents, setLocalStudents] = useState<Student[]>(students)
+
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
 
   const chartAreaRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<DragState | null>(null)
@@ -128,6 +131,11 @@ export function GanttChart({ students, milestones, consultations }: Props) {
     await updateStudentDates(studentId, student.start_date, student.end_date)
   }, [localStudents])
 
+  const handleRowClick = useCallback((student: Student) => {
+    if (isDraggingRef.current) return
+    setSelectedStudent(student)
+  }, [])
+
   return (
     <div>
       {/* Toggle */}
@@ -188,6 +196,7 @@ export function GanttChart({ students, milestones, consultations }: Props) {
             <div
               key={student.id}
               className="flex border-b border-line last:border-0 hover:bg-[oklch(98%_0.005_260)] cursor-pointer"
+              onClick={() => handleRowClick(student)}
             >
               {/* Label column */}
               <div className="shrink-0 w-44 px-4 py-3 border-r border-line">
@@ -265,6 +274,17 @@ export function GanttChart({ students, milestones, consultations }: Props) {
           )
         })}
       </div>
+
+      {selectedStudent && (
+        <GanttSidePanel
+          student={selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+          onSaved={(updated) => {
+            setLocalStudents(prev => prev.map(s => s.id === updated.id ? updated : s))
+            setSelectedStudent(null)
+          }}
+        />
+      )}
     </div>
   )
 }
