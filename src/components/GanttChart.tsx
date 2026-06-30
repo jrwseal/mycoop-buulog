@@ -41,6 +41,8 @@ interface DragState {
   origEnd: Date
   chartWidthPx: number
   rangeTotalMs: number
+  pendingStart?: string  // ISO date string YYYY-MM-DD
+  pendingEnd?: string    // ISO date string YYYY-MM-DD
 }
 
 export function GanttChart({ students, milestones, consultations }: Props) {
@@ -52,7 +54,11 @@ export function GanttChart({ students, milestones, consultations }: Props) {
   const chartAreaRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<DragState | null>(null)
   const isDraggingRef = useRef(false)
-  const localStudentsRef = useRef<Student[]>(students)
+
+  // Fix 2: re-sync localStudents when server pushes fresh props
+  useEffect(() => {
+    setLocalStudents(students)
+  }, [students])
 
   const range = computeTimelineRange(localStudents)
   const monthLabels = getMonthLabels(range)
@@ -91,26 +97,35 @@ export function GanttChart({ students, milestones, consultations }: Props) {
 
     const deltaDays = pxToDays(dx, drag.chartWidthPx, drag.rangeTotalMs)
 
+    // Compute new dates outside the setState callback so we can store them
+    // directly in dragRef (Fix 1: avoid stale-ref race on pointerUp)
+    let newStart = drag.origStart
+    let newEnd = drag.origEnd
+
+    if (drag.zone === 'move') {
+      newStart = addDays(drag.origStart, deltaDays)
+      newEnd = addDays(drag.origEnd, deltaDays)
+    } else if (drag.zone === 'start') {
+      newStart = addDays(drag.origStart, deltaDays)
+      if (newStart >= newEnd) newStart = addDays(newEnd, -1)
+    } else {
+      newEnd = addDays(drag.origEnd, deltaDays)
+      if (newEnd <= newStart) newEnd = addDays(newStart, 1)
+    }
+
+    const newStartStr = newStart.toISOString().slice(0, 10)
+    const newEndStr = newEnd.toISOString().slice(0, 10)
+
+    // Store computed dates in dragRef so handlePointerUp always reads fresh values
+    drag.pendingStart = newStartStr
+    drag.pendingEnd = newEndStr
+
     setLocalStudents(prev => prev.map(s => {
       if (s.id !== studentId) return s
-      let newStart = drag.origStart
-      let newEnd = drag.origEnd
-
-      if (drag.zone === 'move') {
-        newStart = addDays(drag.origStart, deltaDays)
-        newEnd = addDays(drag.origEnd, deltaDays)
-      } else if (drag.zone === 'start') {
-        newStart = addDays(drag.origStart, deltaDays)
-        if (newStart >= newEnd) newStart = addDays(newEnd, -1)
-      } else {
-        newEnd = addDays(drag.origEnd, deltaDays)
-        if (newEnd <= newStart) newEnd = addDays(newStart, 1)
-      }
-
       return {
         ...s,
-        start_date: newStart.toISOString().slice(0, 10),
-        end_date: newEnd.toISOString().slice(0, 10),
+        start_date: newStartStr,
+        end_date: newEndStr,
       }
     }))
   }, [])
@@ -126,19 +141,17 @@ export function GanttChart({ students, milestones, consultations }: Props) {
     if (!isDraggingRef.current) return
     isDraggingRef.current = false
 
-    const student = localStudentsRef.current.find(s => s.id === studentId)
-    if (!student?.start_date || !student?.end_date) return
-    await updateStudentDates(studentId, student.start_date, student.end_date)
+    // Fix 1: read dates from dragRef instead of localStudentsRef to avoid
+    // stale-ref race between setState and the async useEffect sync
+    const { pendingStart, pendingEnd } = drag
+    if (!pendingStart || !pendingEnd) return
+    await updateStudentDates(studentId, pendingStart, pendingEnd)
   }, [])
 
   const handleRowClick = useCallback((student: Student) => {
     if (isDraggingRef.current) return
     setSelectedStudent(student)
   }, [])
-
-  useEffect(() => {
-    localStudentsRef.current = localStudents
-  }, [localStudents])
 
   return (
     <div>
